@@ -69,6 +69,9 @@ class Shape:
     def calculate_pixels(self):
         raise NotImplementedError("Need to create inherent function.")
 
+    def calculate_local_rotation(self, pixels):
+        pass
+
     def calculate_rotation(self, pixels):
         for i in range(len(pixels)):
             polar_pixel = [
@@ -134,6 +137,29 @@ class Rectangle(Shape):
             [self.position[0] + size_x, self.position[1] - size_y],
             [self.position[0] + size_x, self.position[1] + size_y],
             [self.position[0] - size_x, self.position[1] + size_y]]
+        return pixels
+
+
+class Hexagon(Shape):
+    def __init__(self, position, scale, rotation, size, manager, color=(255, 255, 255)):
+        super().__init__(position, scale, rotation, manager, color)
+        self.size = size
+
+    def calculate_pixels(self):
+        size_x = self.size/2 * self.scale[0]
+        size_y = self.size/2 * self.scale[1]
+        #   1     2
+        #
+        # 6         3
+        #
+        #   5     4
+        pixels = [
+            [self.position[0] - 2/3*size_x, self.position[1] - size_y],
+            [self.position[0] + 2/3*size_x, self.position[1] - size_y],
+            [self.position[0] + 4/3*size_x, self.position[1]],
+            [self.position[0] + 2/3*size_x, self.position[1] + size_y],
+            [self.position[0] - 2/3*size_x, self.position[1] + size_y],
+            [self.position[0] - 4/3*size_x, self.position[1]]]
         return pixels
 
 

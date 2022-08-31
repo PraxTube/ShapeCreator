@@ -16,6 +16,9 @@ class Creator(Signal.SignalListener):
         self.canvas = ImageDraw.Draw(self.image)
         self.shape_manager = Shapes.ShapeManager()
 
+    def draw_canvas(self):
+        self.shape_manager.draw(self.canvas, self.im_size)
+
     def save_canvas(self, output_filename="output.png"):
         self.image.save(output_filename)
 
@@ -32,6 +35,11 @@ class Creator(Signal.SignalListener):
             position, scale, rotation, size, self.shape_manager)
         return rectangle
 
+    def create_hexagon(self, position, scale, rotation, size):
+        hexagon = Shapes.Hexagon(
+            position, scale, rotation, size, self.shape_manager)
+        return hexagon
+
     def create_ellipse(self, position, scale, radius):
         ellipse = Shapes.Ellipse(
             position, scale, radius, self.shape_manager)
@@ -40,6 +48,8 @@ class Creator(Signal.SignalListener):
 
 def main():
     creator = Creator((400, 400))
+    creator.create_hexagon((-100, -100), (1, 1), 0, 150)
+    creator.draw_canvas()
     creator.save_canvas()
     creator.show_image()
 
