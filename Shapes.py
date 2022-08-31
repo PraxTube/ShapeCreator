@@ -23,12 +23,14 @@ class Shape:
     position = None
     scale = None
     rotation = None
+    local_rotation = None
     color = None
 
-    def __init__(self, position, scale, rotation, manager, color=(255, 255, 255)):
+    def __init__(self, position, scale, rotation, local_rotation, manager, color=(255, 255, 255)):
         self.set_position(position)
         self.set_scale(scale)
         self.set_rotation(rotation)
+        self.local_rotation = local_rotation
         self.set_color(color)
 
         self.manager = manager
@@ -62,7 +64,8 @@ class Shape:
         self.color = color
 
     def draw(self, canvas, im_size):
-        pixels = self.calculate_rotation(self.calculate_pixels())
+        rot_pixels = self.calculate_local_rotation(self.calculate_pixels())
+        pixels = self.calculate_rotation(rot_pixels, self.rotation)
         self.add_offset_to_pixels(pixels, (im_size[0], im_size[1]))
         canvas.polygon(tuple(pixels), fill=self.color)
 
@@ -70,9 +73,14 @@ class Shape:
         raise NotImplementedError("Need to create inherent function.")
 
     def calculate_local_rotation(self, pixels):
-        pass
+        pixels = self.calculate_rotation(pixels, self.local_rotation)
+        for i in range(len(pixels)):
+            pixels[i][0] += self.position[0]
+            pixels[i][1] += self.position[1]
+        return pixels
 
-    def calculate_rotation(self, pixels):
+    @staticmethod
+    def calculate_rotation(pixels, rot):
         for i in range(len(pixels)):
             polar_pixel = [
                 math.sqrt(pixels[i][0]**2 + pixels[i][1]**2),
@@ -86,7 +94,7 @@ class Shape:
                 polar_pixel[1] += math.pi
             elif pixels[i][0] > 0 and pixels[i][1] < 0:
                 polar_pixel[1] += 2*math.pi
-            polar_pixel[1] += math.radians(self.rotation)
+            polar_pixel[1] += math.radians(rot)
 
             pixels[i][0] = polar_pixel[0] * math.cos(polar_pixel[1])
             pixels[i][1] = polar_pixel[0] * math.sin(polar_pixel[1])
@@ -101,8 +109,8 @@ class Shape:
 
 
 class Triangle(Shape):
-    def __init__(self, position, scale, rotation, height, manager, color=(255, 255, 255)):
-        super().__init__(position, scale, rotation, manager, color)
+    def __init__(self, position, scale, rotation, local_rotation, height, manager, color=(255, 255, 255)):
+        super().__init__(position, scale, rotation, local_rotation, manager, color)
         self.height = height
 
     def calculate_pixels(self):
@@ -114,15 +122,15 @@ class Triangle(Shape):
         #
         # 2         3
         pixels = [
-            [self.position[0], self.position[1] - scaled_height_y],
-            [self.position[0] - x_offset, self.position[1] + scaled_height_y],
-            [self.position[0] + x_offset, self.position[1] + scaled_height_y]]
+            [0, -scaled_height_y],
+            [-x_offset, scaled_height_y],
+            [x_offset, scaled_height_y]]
         return pixels
 
 
 class Rectangle(Shape):
-    def __init__(self, position, scale, rotation, size, manager, color=(255, 255, 255)):
-        super().__init__(position, scale, rotation, manager, color)
+    def __init__(self, position, scale, rotation, local_rotation, size, manager, color=(255, 255, 255)):
+        super().__init__(position, scale, rotation, local_rotation, manager, color)
         self.size = size
 
     def calculate_pixels(self):
@@ -133,16 +141,16 @@ class Rectangle(Shape):
         #
         # 4     3
         pixels = [
-            [self.position[0] - size_x, self.position[1] - size_y],
-            [self.position[0] + size_x, self.position[1] - size_y],
-            [self.position[0] + size_x, self.position[1] + size_y],
-            [self.position[0] - size_x, self.position[1] + size_y]]
+            [-size_x, -size_y],
+            [size_x, -size_y],
+            [size_x, size_y],
+            [-size_x, size_y]]
         return pixels
 
 
 class Hexagon(Shape):
-    def __init__(self, position, scale, rotation, size, manager, color=(255, 255, 255)):
-        super().__init__(position, scale, rotation, manager, color)
+    def __init__(self, position, scale, rotation, local_rotation, size, manager, color=(255, 255, 255)):
+        super().__init__(position, scale, rotation, local_rotation, manager, color)
         self.size = size
 
     def calculate_pixels(self):
@@ -154,12 +162,12 @@ class Hexagon(Shape):
         #
         #   5     4
         pixels = [
-            [self.position[0] - 2/3*size_x, self.position[1] - size_y],
-            [self.position[0] + 2/3*size_x, self.position[1] - size_y],
-            [self.position[0] + 4/3*size_x, self.position[1]],
-            [self.position[0] + 2/3*size_x, self.position[1] + size_y],
-            [self.position[0] - 2/3*size_x, self.position[1] + size_y],
-            [self.position[0] - 4/3*size_x, self.position[1]]]
+            [-2/3*size_x, -size_y],
+            [2/3*size_x, -size_y],
+            [4/3*size_x, 0],
+            [2/3*size_x, size_y],
+            [-2/3*size_x, size_y],
+            [-4/3*size_x, 0]]
         return pixels
 
 

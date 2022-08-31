@@ -25,19 +25,19 @@ class Creator(Signal.SignalListener):
     def show_image(self):
         self.image.show("Image")
 
-    def create_triangle(self, position, scale, rotation, height):
+    def create_triangle(self, position, scale, rotation, local_rotation, height):
         triangle = Shapes.Triangle(
-            position, scale, rotation, height, self.shape_manager)
+            position, scale, rotation, local_rotation, height, self.shape_manager)
         return triangle
 
-    def create_rectangle(self, position, scale, rotation, size):
+    def create_rectangle(self, position, scale, rotation, local_rotation, size):
         rectangle = Shapes.Rectangle(
-            position, scale, rotation, size, self.shape_manager)
+            position, scale, rotation, local_rotation, size, self.shape_manager)
         return rectangle
 
-    def create_hexagon(self, position, scale, rotation, size):
+    def create_hexagon(self, position, scale, rotation, local_rotation, size):
         hexagon = Shapes.Hexagon(
-            position, scale, rotation, size, self.shape_manager)
+            position, scale, rotation, local_rotation, size, self.shape_manager)
         return hexagon
 
     def create_ellipse(self, position, scale, radius):
@@ -48,7 +48,7 @@ class Creator(Signal.SignalListener):
 
 def main():
     creator = Creator((400, 400))
-    creator.create_hexagon((-100, -100), (1, 1), 0, 150)
+    creator.create_hexagon((-100, -100), (1, 1), 90, 0, 150)
     creator.draw_canvas()
     creator.save_canvas()
     creator.show_image()
