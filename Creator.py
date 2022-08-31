@@ -16,51 +16,32 @@ class Creator(Signal.SignalListener):
         self.canvas = ImageDraw.Draw(self.image)
         self.shape_manager = Shapes.ShapeManager()
 
-        self.input_manager = Input.Input()
-        self.input_manager.subscribe(self)
+    def save_canvas(self, output_filename="output.png"):
+        self.image.save(output_filename)
 
-    def save_canvas(self, output_file="output.png"):
-        self.image.save(output_file)
+    def show_image(self):
+        self.image.show("Image")
 
-    def undo_command(self):
-        print("undoing...")
+    def create_triangle(self, position, scale, rotation, height):
+        triangle = Shapes.Triangle(
+            position, scale, rotation, height, self.shape_manager)
+        return triangle
 
-    def redo_command(self):
-        print("redoing...")
+    def create_rectangle(self, position, scale, rotation, size):
+        rectangle = Shapes.Rectangle(
+            position, scale, rotation, size, self.shape_manager)
+        return rectangle
 
-    def check_command(self, command):
-        commands = [
-            ["undo", self.undo_command],
-            ["redo", self.redo_command]
-        ]
-
-        for c in commands:
-            if c[0] == command:
-                c[1]()
-                break
-
-    def signal_raised(self, message):
-        self.check_command(message)
-
-    def temp(self):
-        tr = []
-
-        for i in range(10):
-            tr.append(Shapes.Triangle((0, 150), (1, 1), 36 * i, 60, self.shape_manager))
-
-        re = Shapes.Triangle((0, -50), (1, 1), 0, 200, self.shape_manager)
-
-        self.shape_manager.draw(self.canvas, self.im_size)
-
-        for t in tr:
-            new_pos = (t.position[0], t.position[1] - 50)
-            t.set_position(new_pos)
-
-        self.shape_manager.draw(self.canvas, self.im_size)
+    def create_ellipse(self, position, scale, radius):
+        ellipse = Shapes.Ellipse(
+            position, scale, radius, self.shape_manager)
+        return ellipse
 
 
 def main():
     creator = Creator((400, 400))
+    creator.save_canvas()
+    creator.show_image()
 
 
 if __name__ == "__main__":

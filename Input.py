@@ -15,7 +15,7 @@ class Input(Signal.Signal):
         while not self.c_manager.quit_command(user_input):
             command = self.c_manager.valide_command(user_input)
             if type(command) == str:
-                self.raise_signal(command)
+                self.raise_signal(command, user_input)
 
             user_input = input()
 
@@ -24,8 +24,8 @@ class Commands:
     def __init__(self):
         pass
 
-    def check_commands(self, user_input, commands):
-        if user_input.lower() in commands:
+    def check_command(self, user_input, command):
+        if user_input.lower().split()[0] == command:
             return True
         return False
 
@@ -33,27 +33,19 @@ class Commands:
         commands = [
             "q", "exit", "esc", ":q", ":qa!"
         ]
-        return self.check_commands(user_input, commands)
+        if user_input.lower() in commands:
+            return True
+        return False
 
     def valide_command(self, user_input):
         commands = [
-            ["undo", self.undo_command],
-            ["redo", self.redo_commands]
+            "undo",
+            "redo",
+            "create",
+            "save"
         ]
 
-        for c in commands:
-            if self.check_commands(user_input, c[1]()):
-                return c[0]
+        for command in commands:
+            if self.check_command(user_input, command):
+                return command
         return None
-
-    def undo_command(self):
-        commands = [
-            "undo", "un"
-        ]
-        return commands
-
-    def redo_commands(self):
-        commands = [
-            "redo", "re"
-        ]
-        return commands

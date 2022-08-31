@@ -14,6 +14,7 @@ class ShapeManager:
         self.shapes.remove(shape)
 
     def draw(self, canvas, im_size):
+        canvas.polygon((0, 0, im_size[0], 0, im_size[0], im_size[1], 0, im_size[1]), fill=(0, 0, 0))
         for shape in self.shapes:
             shape.draw(canvas, im_size)
 

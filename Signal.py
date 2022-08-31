@@ -8,11 +8,11 @@ class Signal:
     def unsubscribe(self, listener):
         self.listeners.remove(listener)
 
-    def raise_signal(self, signal_message):
+    def raise_signal(self, signal_message, second_message=""):
         for listener in self.listeners:
-            listener.signal_raised(signal_message)
+            listener.signal_raised(signal_message, second_message)
 
 
 class SignalListener:
-    def signal_raised(self, message):
+    def signal_raised(self, message, second_message):
         pass
