@@ -173,7 +173,7 @@ class Hexagon(Shape):
 
 class Ellipse(Shape):
     def __init__(self, position, scale, radius, manager, color=(255, 255, 255)):
-        super().__init__(position, scale, 0, manager, color)
+        super().__init__(position, scale, 0, 0, manager, color)
         self.radius = radius
 
     def draw(self, canvas, im_size):
